@@ -20,7 +20,6 @@ class CBT_Plugin {
 
 		$this->load_dependencies();
 		$this->define_admin_hooks();
-
 	}
 
 	/**
@@ -35,17 +34,20 @@ class CBT_Plugin {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-create-block-theme-loader.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-create-block-theme-loader.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-create-block-theme-api.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-create-block-theme-editor-tools.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-create-block-theme-admin-landing.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-create-block-theme-api.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-create-block-theme-editor-tools.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-create-block-theme-admin-landing.php';
+
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			require_once plugin_dir_path( __DIR__ ) . 'includes/class-create-block-theme-wpcli.php';
+		}
 
 		$this->loader = new CBT_Plugin_Loader();
-
 	}
 
 	/**
@@ -59,6 +61,10 @@ class CBT_Plugin {
 		$plugin_api    = new CBT_Theme_API();
 		$editor_tools  = new CBT_Editor_Tools();
 		$admin_landing = new CBT_Admin_Landing();
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			$clicommand = new CBT_WPCLI();
+			WP_CLI::add_command( 'cbt', $clicommand );
+		}
 	}
 
 	/**
